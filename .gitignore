@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual Environment
+.venv/
+
+# Database
+gps_tracker.db
+
+# VS Code
+.vscode/
