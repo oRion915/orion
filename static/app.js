@@ -33,6 +33,10 @@ const pointsText = document.getElementById("points");
 const updatedText = document.getElementById("updated");
 const statusText = document.getElementById("status");
 const clearButton = document.getElementById("clearButton");
+const todayDistanceText = document.getElementById("todayDistance");
+const averageSpeedText = document.getElementById("avgSpeed");
+const tripTimeText = document.getElementById("tripTime");
+const stopsText = document.getElementById("stops");
 
 // ---------------------
 // API Calls
@@ -51,6 +55,13 @@ async function getAllLocations() {
 
 }
 
+async function getAnalytics() {
+
+    const response = await fetch("/analytics");
+    return await response.json();
+
+}
+
 async function clearHistory() {
 
     const response = await fetch("/locations", {
@@ -60,6 +71,18 @@ async function clearHistory() {
     if (!response.ok) {
         throw new Error("Unable to clear GPS history.");
     }
+
+}
+
+// ---------------------
+// Analytics Update
+// ---------------------
+function updateAnalytics(analytics) {
+
+    todayDistanceText.textContent = `${Number(analytics.distance).toFixed(2)} km`;
+    averageSpeedText.textContent = `${Number(analytics.average_speed).toFixed(2)} km/h`;
+    tripTimeText.textContent = analytics.duration;
+    stopsText.textContent = analytics.stops;
 
 }
 
@@ -103,8 +126,13 @@ async function updateDashboard() {
 
     try {
 
-        const latest = await getLatestLocation();
-        const locations = await getAllLocations();
+        const [latest, locations, analytics] = await Promise.all([
+            getLatestLocation(),
+            getAllLocations(),
+            getAnalytics()
+        ]);
+
+        updateAnalytics(analytics);
 
         // No data
         if (!latest || latest.message) {
