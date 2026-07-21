@@ -53,9 +53,13 @@ async function getAllLocations() {
 
 async function clearHistory() {
 
-    await fetch("/locations", {
+    const response = await fetch("/locations", {
         method: "DELETE"
     });
+
+    if (!response.ok) {
+        throw new Error("Unable to clear GPS history.");
+    }
 
 }
 
@@ -77,6 +81,22 @@ function updateRoute(locations) {
 }
 
 // ---------------------
+// Empty Dashboard State
+// ---------------------
+function resetDashboard() {
+
+    latitudeText.textContent = "--";
+    longitudeText.textContent = "--";
+    pointsText.textContent = "0";
+    updatedText.textContent = "--";
+    statusText.textContent = "Waiting...";
+
+    marker.remove();
+    route.setLatLngs([]);
+
+}
+
+// ---------------------
 // Dashboard Update
 // ---------------------
 async function updateDashboard() {
@@ -89,13 +109,7 @@ async function updateDashboard() {
         // No data
         if (!latest || latest.message) {
 
-            latitudeText.textContent = "--";
-            longitudeText.textContent = "--";
-            pointsText.textContent = "0";
-            updatedText.textContent = "--";
-            statusText.textContent = "🟢 Waiting...";
-
-            route.setLatLngs([]);
+            resetDashboard();
 
             return;
         }
@@ -108,6 +122,10 @@ async function updateDashboard() {
         statusText.textContent = "🟢 Live";
 
         // Marker
+        if (!map.hasLayer(marker)) {
+            marker.addTo(map);
+        }
+
         marker.setLatLng([
             latest.latitude,
             latest.longitude
@@ -137,16 +155,22 @@ async function updateDashboard() {
 // ---------------------
 clearButton.addEventListener("click", async () => {
 
-    if (!confirm("Clear all saved locations?")) {
+    if (!confirm("Are you sure you want to delete all GPS history?")) {
         return;
     }
 
-    await clearHistory();
+    try {
 
-    marker.setLatLng([14.5995, 120.9842]);
-    route.setLatLngs([]);
+        await clearHistory();
+        resetDashboard();
+        await updateDashboard();
 
-    updateDashboard();
+    } catch (error) {
+
+        console.error(error);
+        statusText.textContent = "🔴 Offline";
+
+    }
 
 });
 
