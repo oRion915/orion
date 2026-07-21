@@ -60,6 +60,23 @@ async function clearHistory() {
 }
 
 // ---------------------
+// Route Update
+// ---------------------
+function updateRoute(locations) {
+
+    const routePoints = locations
+        .slice()
+        .reverse()
+        .map(location => [
+            location.latitude,
+            location.longitude
+        ]);
+
+    route.setLatLngs(routePoints);
+
+}
+
+// ---------------------
 // Dashboard Update
 // ---------------------
 async function updateDashboard() {
@@ -103,15 +120,7 @@ async function updateDashboard() {
         ]);
 
         // Route
-        const points = locations
-            .slice()
-            .reverse()
-            .map(location => [
-                location.latitude,
-                location.longitude
-            ]);
-
-        route.setLatLngs(points);
+        updateRoute(locations);
 
     } catch (error) {
 
