@@ -1,7 +1,8 @@
 import sqlite3
 
-DATABASE = "gps_tracker.db"
+from core.config import DATABASE_URL
 
+DATABASE = DATABASE_URL
 
 def get_connection():
     connection = sqlite3.connect(DATABASE)
