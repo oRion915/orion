@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-import database
+from core.storage import database
 from main import app
 
 

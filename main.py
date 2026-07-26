@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
 
-from database import (
+from core.storage import (
     save_location,
     get_latest_location,
     get_all_locations,

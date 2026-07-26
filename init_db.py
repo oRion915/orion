@@ -1,4 +1,4 @@
-from database import get_connection
+from core.storage import get_connection
 
 connection = get_connection()
 
